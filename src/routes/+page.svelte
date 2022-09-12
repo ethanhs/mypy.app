@@ -2,7 +2,13 @@
   {#await loadPyodide}
   <Pulse size="60" color="#1F5082" unit="px" duration="1.5s"></Pulse>
   {:then _}
-  <CodeMirror bind:value lang={python()} />
+  <CodeMirror
+    bind:value
+    lang={python()}
+    theme={oneDark}
+    extensions={extensions}
+    tabSize={4}
+  />
   <button 
     type="button"
     class="inline-block px-6 py-2.5 bg-blue-600 text-white"
@@ -19,8 +25,19 @@
   import { Pulse } from 'svelte-loading-spinners';
   import CodeMirror from "svelte-codemirror-editor";
   import { python } from '@codemirror/lang-python';
-  import { onMount } from 'svelte';
+  import { oneDark } from '@codemirror/theme-one-dark';
+  import { defaultKeymap, historyKeymap, history } from "@codemirror/commands";
+  import { drawSelection, keymap, lineNumbers } from "@codemirror/view";
   import * as Comlink from "comlink";
+  const extensions = [
+    history(),
+    drawSelection(),
+    lineNumbers(),
+    keymap.of([
+        ...defaultKeymap,
+        ...historyKeymap,
+    ])
+  ];
   let worker: Worker | null = null;
   let output = "";
   let mypy_instance: any = undefined;
