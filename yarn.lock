@@ -265,13 +265,6 @@
     set-cookie-parser "^2.4.8"
     tiny-glob "^0.2.9"
 
-"@sveltejs/adapter-node@^1.0.0-next.90":
-  version "1.0.0-next.90"
-  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-node/-/adapter-node-1.0.0-next.90.tgz#666d6ac285ee923e3aa31734f9b914e9decf7a0c"
-  integrity sha512-xf2mjGMdtOGm9ht/8a/hndRq/WS+IYX3CDrzrqS53y5gcEElXUMSvBe0W6B4dkbVhvLg8l5gyrfW8bWht2BNlg==
-  dependencies:
-    esbuild "^0.15.6"
-
 "@sveltejs/adapter-vercel@1.0.0-next.73":
   version "1.0.0-next.73"
   resolved "https://registry.yarnpkg.com/@sveltejs/adapter-vercel/-/adapter-vercel-1.0.0-next.73.tgz#cb285b4b8adf1f9b1cc3d7df49cc8e201a563fad"
@@ -279,6 +272,14 @@
   dependencies:
     "@vercel/nft" "^0.22.0"
     esbuild "^0.14.48"
+
+"@sveltejs/adapter-vercel@^1.0.0-next.74":
+  version "1.0.0-next.74"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-vercel/-/adapter-vercel-1.0.0-next.74.tgz#c09cbd6d3b22cd69e5eee0caa9e6750bf11aba24"
+  integrity sha512-BMAeib/aH0JdCyMncnugZteVMc47DfKtqE49BpH8JtiIBna34mkYevUWFLyIEVjoNUu2hHr9GMZXBI0q7JL8tQ==
+  dependencies:
+    "@vercel/nft" "^0.22.0"
+    esbuild "^0.15.6"
 
 "@sveltejs/kit@next":
   version "1.0.0-next.480"
