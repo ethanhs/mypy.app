@@ -3,10 +3,15 @@
 	<head>
 		<meta charset="utf-8" />
 		<!-- <link rel="icon" href="%sveltekit.assets%/favicon.png" /> -->
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+		<style>
+			.codemirror-wrapper .cm-editor {
+				height: 100%;
+			}
+		</style>
 		%sveltekit.head%
 	</head>
-	<body>
-		<div>%sveltekit.body%</div>
+	<body style="height: 100vh">
+		<div style="height: 100%">%sveltekit.body%</div>
 	</body>
 </html>
