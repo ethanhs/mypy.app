@@ -1,20 +1,42 @@
-<div>
+<div class="
+  relative
+  h-full
+  items-center
+">
   {#await loadPyodide}
-  <Pulse size="60" color="#1F5082" unit="px" duration="1.5s"></Pulse>
+  <div class="flex flex-col items-center justify-center h-full m-36">
+    <Pulse
+      size="60"
+      color="#1F5082"
+      unit="px"
+      duration="1.5s"
+    />
+    <div class="font-mono text-slate-500 py-2">
+      <p>Loading Python and mypy...</p>
+    </div> 
+  </div>
   {:then _}
-  <CodeMirror
-    bind:value
-    lang={python()}
-    theme={oneDark}
-    extensions={extensions}
-    tabSize={4}
-  />
-  <button 
+  <div class="
+    w-full
+    h-full
+    p-0
+  ">
+    <CodeMirror
+      bind:value
+      lang={python()}
+      theme={oneDark}
+      extensions={extensions}
+      tabSize={4}
+    />
+  </div>
+  <div class="relative w-full flex flex-row">
+    <button
     type="button"
-    class="inline-block px-6 py-2.5 bg-blue-600 text-white"
-    on:click="{runMypy}"></button>
-  <div class="output">
-    <p>{output}</p>
+    class="mr-auto px-6 py-2.5 bg-sky-700 text-slate-200"
+    on:click="{runMypy}">Run mypy</button>
+    <div class="output">
+      <p>{output}</p>
+    </div>
   </div>
   {:catch error}
       <p>Uh-oh, an error occured!</p>
