@@ -166,11 +166,8 @@
     const tmpfile_path = "/tmp/test.py";
     await mypy_instance.writeFile(tmpfile_path, value);
     let args = await mypy_instance.splitFlags(flags);
-    console.log(args)
     let [stdout, stderr, retcode] = await mypy_instance.runMypy([tmpfile_path, "--color-output", ...args]);
-    console.log(retcode);
-    console.log(stdout);
-    console.log(stderr);
+    console.log(retcode)
     waiting_for_mypy = false;
     output = convert.toHtml(stdout + stderr);
   }

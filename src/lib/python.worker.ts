@@ -48,14 +48,11 @@ class MypyWebworkerInterface {
 
     public async installPackage(package_name: string): Promise<string|null> {
         const pyodide = await pyodidePromise;
-        try {
-            let micropip = pyodide.pyimport("micropip");
-            await micropip.install(package_name);
-            return null;
-        } catch (error) {
-            // @ts-ignore
-            return error.toString();
-        }
+        let micropip = pyodide.pyimport("micropip");
+        await micropip.install(package_name);
+        console.log(`Successfully installed ${package_name}.`)
+        return null;
+        
     }
     
 }
