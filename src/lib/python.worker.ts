@@ -45,6 +45,18 @@ class MypyWebworkerInterface {
         const shlex = pyodide.pyimport("shlex");
         return shlex.split(pyodide.toPy(flags)).toJs()
     }
+
+    public async installPackage(package_name: string): Promise<string|null> {
+        const pyodide = await pyodidePromise;
+        try {
+            let micropip = pyodide.pyimport("micropip");
+            await micropip.install(package_name);
+            return null;
+        } catch (error) {
+            // @ts-ignore
+            return error.toString();
+        }
+    }
     
 }
 

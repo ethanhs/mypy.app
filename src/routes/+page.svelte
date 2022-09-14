@@ -17,32 +17,80 @@
   justify-center
   h-[calc(100%-5rem)]
 ">
-  <!--                                    vh - top bar + margin -->
-  <div class="flex justify-center h-[calc(100%-5rem+4px)]">
+  <!--                                    vh - top bar -->
+  <div class="flex justify-center h-[calc(100%-5rem)]">
     <CodeMirror
       bind:value
       lang={python()}
       theme={oneDark}
       extensions={extensions}
       tabSize={4}
-      class="h-full min-w-[50%] text-lg"
+      class="min-w-[50%] text-lg"
     />
-    <div class="output justify-center flex-auto min-w-[50%] h-full p-4 bg-zinc-900 text-slate-100 text-lg">
-      {#if waiting_for_mypy}
-      <div class="flex flex-col items-center justify-center h-[calc(100%-5rem)]">
-        <Pulse
-          size="60"
-          color="#1F5082"
-          unit="px"
-          duration="1.5s"
-        />
-        <div class="font-mono text-slate-500 py-2">
-          <p>Running mypy...</p>
-        </div>
+    <div class="output flex-col justify-center flex-auto min-w-[50%] p-4 bg-zinc-900 text-slate-100 text-lg">
+      <div class="flex-auto h-[50%]">
+        {#if waiting_for_mypy}
+          <div class="flex flex-col items-center justify-center">
+            <Pulse
+              size="60"
+              color="#1F5082"
+              unit="px"
+              duration="1.5s"
+            />
+            <div class="font-mono text-slate-500 py-2">
+              <p>Running mypy...</p>
+            </div>
+          </div>
+        {:else}
+          {@html output}
+        {/if}
       </div>
-      {:else}
-      {@html output}
-      {/if}
+      <div class="flex-auto h-[50%] border-t-2 border-t-slate-300">
+        {#if waiting_for_pip}
+          <div class="flex flex-col items-center justify-center">
+            <Pulse
+              size="60"
+              color="#1F5082"
+              unit="px"
+              duration="1.5s"
+            />
+            <div class="font-mono text-slate-500 py-2">
+              <p>Running pip...</p>
+            </div>
+          </div>
+        {:else}
+          <div class="flex flex-col justify-center">
+            <div class="flex flex-row justify-center">
+              <button
+                type="button"
+                class="m-4 px-6 py-2.5 bg-[#2D323B] text-lg text-slate-300 font-mono max-w-[10rem] flex-auto"
+                on:click="{installPackage}">Install package</button>
+              <input type="text" bind:value="{package_name}" placeholder="types-beautifulsoup4"
+                class="
+                    bg-slate-200
+                    font-mono
+                    text-black
+                    m-4
+                    flex-1
+                    form-control
+                    block
+                    text-lg
+                    w-full
+                    px-3
+                    py-1.5
+                    bg-clip-padding
+                    rounded
+                    transition
+                    ease-in-out
+                    focus:bg-white focus:outline-none
+              "/>
+            </div>
+            <div class="flex-auto">
+              {@html piperror}
+            </div>
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
   <div class="bg-[#1F5082] flex flex-row justify-center">
@@ -102,6 +150,9 @@
 `;
   let flags = "";
   let waiting_for_mypy = false;
+  let package_name = "";
+  let piperror = "";
+  let waiting_for_pip = false;
   const loadPyodide = (async () => {
     const PythonWorker = await import('../lib/python.worker.ts?worker');
     worker = new PythonWorker.default();
@@ -122,5 +173,14 @@
     console.log(stderr);
     waiting_for_mypy = false;
     output = convert.toHtml(stdout + stderr);
+  }
+  async function installPackage() {
+    waiting_for_pip = true;
+    const error = await mypy_instance.installPackage(package_name);
+    package_name = ""
+    if (error != null) {
+      piperror = error;
+    }
+    waiting_for_pip = false;
   }
 </script>
