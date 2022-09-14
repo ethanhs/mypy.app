@@ -8,6 +8,11 @@ const config = {
 	}),
 
 	kit: {
+		vite: {
+            build: {
+                sourcemap: true
+            }
+        },
 		adapter: vercel(),
 	}
 };
