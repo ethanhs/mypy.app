@@ -39,6 +39,12 @@ class MypyWebworkerInterface {
         const mypy_api = pyodide.pyimport("mypy.api");
         return mypy_api.run(pyodide.toPy(args)).toJs();
     }
+
+    public async splitFlags(flags: string): Promise<string[]> {
+        const pyodide = await pyodidePromise;
+        const shlex = pyodide.pyimport("shlex");
+        return shlex.split(pyodide.toPy(flags)).toJs()
+    }
     
 }
 

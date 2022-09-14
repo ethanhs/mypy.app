@@ -27,15 +27,48 @@
       tabSize={4}
       class="h-full min-w-[50%] text-lg"
     />
-    <div class="output flex-auto min-w-[50%] h-full p-4 bg-zinc-900 text-slate-100 text-lg">
+    <div class="output justify-center flex-auto min-w-[50%] h-full p-4 bg-zinc-900 text-slate-100 text-lg">
+      {#if waiting_for_mypy}
+      <div class="flex flex-col items-center justify-center h-[calc(100%-5rem)]">
+        <Pulse
+          size="60"
+          color="#1F5082"
+          unit="px"
+          duration="1.5s"
+        />
+        <div class="font-mono text-slate-500 py-2">
+          <p>Running mypy...</p>
+        </div>
+      </div>
+      {:else}
       {@html output}
+      {/if}
     </div>
   </div>
-  <div class="bg-[#1F5082]">
+  <div class="bg-[#1F5082] flex flex-row justify-center">
     <button
     type="button"
-    class="m-4 px-6 py-2.5 bg-[#2D323B] text-slate-300 font-mono"
+    class="m-4 px-6 py-2.5 bg-[#2D323B] text-lg text-slate-300 font-mono max-w-[20rem] flex-auto"
     on:click="{runMypy}">Run mypy</button>
+    <input type="text" bind:value="{flags}" placeholder="Mypy command line arguments go here..."
+     class="
+        bg-slate-200
+        font-mono
+        text-black
+        m-4
+        flex-1
+        form-control
+        block
+        text-lg
+        w-full
+        px-3
+        py-1.5
+        bg-clip-padding
+        rounded
+        transition
+        ease-in-out
+        focus:bg-white focus:outline-none
+      "/>
   </div>
 </div>
 {:catch error}
@@ -67,6 +100,8 @@
   let value = `def example(a: int, b: str) -> int:
     return a + b
 `;
+  let flags = "";
+  let waiting_for_mypy = false;
   const loadPyodide = (async () => {
     const PythonWorker = await import('../lib/python.worker.ts?worker');
     worker = new PythonWorker.default();
@@ -76,13 +111,16 @@
     return await mypy_instance.ensurePyodideLoaded();
   })();
   async function runMypy() {
-    // TODO: handle args
+    waiting_for_mypy = true;
     const tmpfile_path = "/tmp/test.py";
     await mypy_instance.writeFile(tmpfile_path, value);
-    let [stdout, stderr, retcode] = await mypy_instance.runMypy([tmpfile_path, "--color-output"]);
+    let args = await mypy_instance.splitFlags(flags);
+    console.log(args)
+    let [stdout, stderr, retcode] = await mypy_instance.runMypy([tmpfile_path, "--color-output", ...args]);
     console.log(retcode);
     console.log(stdout);
     console.log(stderr);
+    waiting_for_mypy = false;
     output = convert.toHtml(stdout + stderr);
   }
 </script>
