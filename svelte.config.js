@@ -4,15 +4,13 @@ import preprocess from 'svelte-preprocess';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: preprocess({
+		sourceMap: true,
 		postcss: true,
 	}),
-
+	compilerOptions: {
+		enableSourcemap: true,
+	},
 	kit: {
-		vite: {
-            build: {
-                sourcemap: true
-            }
-        },
 		adapter: vercel(),
 	}
 };
