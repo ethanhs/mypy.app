@@ -179,7 +179,12 @@
   let piperror = "";
   let waiting_for_pip = false;
   let installed_packages: Set<string> = new Set();
-  onMount(async () => {
+  const loadPyodide = (async () => {
+    const PythonWorker = await import('../lib/python.worker.ts?worker');
+    worker = new PythonWorker.default();
+    const MypyWebworker = Comlink.wrap(worker);
+    // @ts-ignore
+    mypy_instance = await new MypyWebworker();
     const from = $page.url.searchParams.get("from");
     if (from != null) {
       const res = await fetch(
@@ -188,19 +193,15 @@
           method: 'GET',
         }
       );
-      [flags, installed_packages, value] = await res.json();
-      installed_packages = new Set(installed_packages);
+      let packages;
+    [flags, packages, value] = await res.json();
+    installed_packages = new Set(packages);
     }
-  })
-  const loadPyodide = (async () => {
-    const PythonWorker = await import('../lib/python.worker.ts?worker');
-    worker = new PythonWorker.default();
-    const MypyWebworker = Comlink.wrap(worker);
-    // @ts-ignore
-    mypy_instance = await new MypyWebworker();
+    console.log(installed_packages.size)
     if (installed_packages.size != 0) {
       await Promise.all(Array.from(installed_packages).map(async (installed_package) => {
         await mypy_instance.installPackage(installed_package);
+        console.log(installed_package)
       }));
     }
     return await mypy_instance.ensurePyodideLoaded();
