@@ -190,8 +190,8 @@
       );
       [flags, installed_packages, value] = await res.json();
       installed_packages = new Set(installed_packages);
-      installed_packages.forEach(installed_package => {
-        mypy_instance.installPackage(installed_package);
+      installed_packages.forEach(async (installed_package) => {
+        await mypy_instance.installPackage(installed_package);
       });
     }
   })
