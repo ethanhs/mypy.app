@@ -9,7 +9,7 @@
 		thanks to them! The project was inspired by
 		<a class="text-slate-800 underline" href="https://mypy-play.net"
 			>the mypy playground by Yusuke Miyazaki</a
-		>I also would like to thank my friends for trying the app and giving valuable feedback.
+		> I also would like to thank my friends for trying the app and giving valuable feedback.
 	</div>
 	<div class="flex items-center justify-center m-10">
 		<a class="text-slate-800 underline text-2xl" href="https://github.com/ethanhs/mypy.app">
