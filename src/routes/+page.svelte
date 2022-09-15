@@ -88,6 +88,14 @@
             <div class="flex-auto">
               {@html piperror}
             </div>
+            <div class="flex-auto">
+              <h3>Installed packages:</h3>
+              <ul>
+                {#each Array.from(installed_packages) as installed_package}
+                  <li>{installed_package}</li>
+                {/each}
+              </ul>
+            </div>
           </div>
         {/if}
       </div>
@@ -97,7 +105,7 @@
     <button
     type="button"
     class="m-4 px-6 py-2.5 bg-[#2D323B] text-lg text-slate-300 font-mono max-w-[20rem] flex-auto"
-    on:click="{runMypy}">Run mypy</button>
+    on:click|preventDefault="{runMypy}">Run mypy</button>
     <input type="text" bind:value="{flags}" placeholder="Mypy command line arguments go here..."
      class="
         bg-slate-200
@@ -117,10 +125,20 @@
         ease-in-out
         focus:bg-white focus:outline-none
       "/>
+      <Modal
+        show={$modal}
+        classBg=""
+        styleWindow={{ backgroundColor: '#1F5082', boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
+        styleCloseButton={{ backgroundColor: "rgb(203 213 225)", "border-color": "#2D323B"}}
+      >
+        <button class="m-4 px-6 py-2.5 bg-[#2D323B] text-lg text-slate-300 font-mono max-w-[20rem] flex-auto"
+          on:click|preventDefault="{getShortUrl}"
+        >Share</button>
+      </Modal>
   </div>
 </div>
 {:catch error}
-    <p>Uh-oh, an error occured! :(</p>
+    <p>Uh-oh, an error occured! :( {error.toString()}</p>
 {/await}
 
 <script lang=ts>
@@ -132,6 +150,12 @@
   import { drawSelection, keymap, lineNumbers } from "@codemirror/view";
   import * as Comlink from "comlink";
   import { default as Convert } from "ansi-to-html";
+  import { onMount } from "svelte";
+  import { page } from '$app/stores';
+  import { writable, type Writable } from 'svelte/store';
+  import Modal, { bind } from 'svelte-simple-modal';
+  import Popup from '$lib/components/Popup.svelte';
+  const modal: Writable<string|null> = writable(null);
   const extensions = [
     history(),
     drawSelection(),
@@ -141,6 +165,7 @@
         ...historyKeymap,
     ])
   ];
+  let short = '';
   let worker: Worker | null = null;
   let convert = new Convert({newline: true});
   let output = "";
@@ -153,6 +178,23 @@
   let package_name = "";
   let piperror = "";
   let waiting_for_pip = false;
+  let installed_packages: Set<string> = new Set();
+  onMount(async () => {
+    const from = $page.url.searchParams.get("from");
+    if (from != null) {
+      const res = await fetch(
+        `/short?from=${from}`,
+        {
+          method: 'GET',
+        }
+      );
+      [flags, installed_packages, value] = await res.json();
+      installed_packages = new Set(installed_packages);
+      installed_packages.forEach(installed_package => {
+        mypy_instance.installPackage(installed_package);
+      });
+    }
+  })
   const loadPyodide = (async () => {
     const PythonWorker = await import('../lib/python.worker.ts?worker');
     worker = new PythonWorker.default();
@@ -161,6 +203,18 @@
     mypy_instance = await new MypyWebworker();
     return await mypy_instance.ensurePyodideLoaded();
   })();
+  async function getShortUrl() {
+    let body = JSON.stringify([flags, Array.from(installed_packages), value]);
+    const res = await fetch(
+      `/short`,
+      {
+        method: 'POST',
+        body: body,
+      }
+    );
+    short = await res.text()
+    modal.set(bind(Popup, {short: short}));
+  }
   async function runMypy() {
     waiting_for_mypy = true;
     const tmpfile_path = "/tmp/test.py";
@@ -172,12 +226,16 @@
     output = convert.toHtml(stdout + stderr);
   }
   async function installPackage() {
+    piperror = ""
     waiting_for_pip = true;
     const error = await mypy_instance.installPackage(package_name);
-    package_name = ""
     if (error != null) {
       piperror = error;
+    } else {
+      // Assume if there was an error the package did not get installed correctly
+      installed_packages.add(package_name);
     }
+    package_name = ""
     waiting_for_pip = false;
   }
 </script>

@@ -12,7 +12,7 @@ async function loadPyodideAndPackages(version = "0.21.2") {
         "mypy_extensions>=0.4.3",
         "tomli>=1.1.0",
     ]);
-    await micropip.install("/mypy-0.980+dev.36709e317890623feb0b2d81b02fff8ae4346b2d.dirty-cp310-cp310-emscripten_3_1_14_wasm32.whl")
+    await pyodide.loadPackage("/mypy-0.980+dev.36709e317890623feb0b2d81b02fff8ae4346b2d.dirty-cp310-cp310-emscripten_3_1_14_wasm32.whl")
     return pyodide;
 }
 
@@ -49,7 +49,15 @@ class MypyWebworkerInterface {
     public async installPackage(package_name: string): Promise<string|null> {
         const pyodide = await pyodidePromise;
         let micropip = pyodide.pyimport("micropip");
-        await micropip.install(package_name);
+        try {
+            await micropip.install(package_name);
+        } catch (error) {
+            if (error instanceof pyodide.PythonError) {
+                return error.toString();
+            } else {
+                throw error;
+            }
+        }
         console.log(`Successfully installed ${package_name}.`)
         return null;
         
