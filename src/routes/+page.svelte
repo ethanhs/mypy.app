@@ -190,9 +190,6 @@
       );
       [flags, installed_packages, value] = await res.json();
       installed_packages = new Set(installed_packages);
-      installed_packages.forEach(async (installed_package) => {
-        await mypy_instance.installPackage(installed_package);
-      });
     }
   })
   const loadPyodide = (async () => {
@@ -201,6 +198,11 @@
     const MypyWebworker = Comlink.wrap(worker);
     // @ts-ignore
     mypy_instance = await new MypyWebworker();
+    if (installed_packages.size != 0) {
+      installed_packages.forEach(async (installed_package) => {
+        await mypy_instance.installPackage(installed_package);
+      });
+    }
     return await mypy_instance.ensurePyodideLoaded();
   })();
   async function getShortUrl() {
