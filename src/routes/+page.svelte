@@ -92,7 +92,7 @@
 		waiting_for_pip = true;
 		const error: string = await mypy_instance.installPackage(package_name);
 		if (error != null) {
-			piperror = error.replace(/(?:\r\n|\r|\n)/g, "<br>");
+			piperror = error.replace(/(?:\r\n|\r|\n)/g, '<br>');
 		} else {
 			// Assume if there was an error the package did not get installed correctly
 			installed_packages.add(package_name);
@@ -102,40 +102,41 @@
 	}
 </script>
 
-{#await loadPyodide}
-	<div class="h-[calc(100%-5rem)]">
-		<Loader message="Loading mypy and Python..." />
-	</div>
-{:then _}
-	<div
-		class="
-  flex-none
-  flex-col
-  justify-center
-  h-[calc(100%-5rem)]
+<div
+	class="
+flex-none
+flex-col
+justify-center
+h-[calc(100%-5rem)]
 "
-	>
-		<!--                                    vh - top bar -->
-		<div class="flex justify-center h-[calc(100%-5rem)]">
-			<CodeMirror
-				bind:value={src}
-				lang={python()}
-				theme={oneDark}
-				{extensions}
-				tabSize={4}
-				class="min-w-[50%] text-lg"
-			/>
-			<div
-				class="output flex-col justify-center flex-auto min-w-[50%] p-4 bg-zinc-900 text-slate-100 text-lg"
-			>
-				<div class="flex-auto h-[50%]">
+>
+	<!--                                    vh - top bar -->
+	<div class="flex justify-center h-[calc(100%-5rem)]">
+		<CodeMirror
+			bind:value={src}
+			lang={python()}
+			theme={oneDark}
+			{extensions}
+			tabSize={4}
+			class="min-w-[50%] text-lg"
+		/>
+		<div
+			id="right_half"
+			class="output flex-col justify-center flex-auto min-w-[50%] p-4 bg-zinc-900 text-slate-100 text-lg"
+		>
+			{#await loadPyodide}
+				<div class="h-full items-center justify-center flex">
+					<Loader message="Loading mypy and Python..." />
+				</div>
+			{:then _}
+				<div id="output_area" class="flex-auto h-[50%]">
 					{#if waiting_for_mypy}
 						<Loader message="Running mypy..." />
 					{:else}
 						{@html output}
 					{/if}
 				</div>
-				<div class="flex-auto h-[50%] border-t-2 border-t-slate-300">
+				<div id="pip_area" class="flex-auto h-[50%] border-t-2 border-t-slate-300">
 					{#if waiting_for_pip}
 						<Loader message="Running pip..." />
 					{:else}
@@ -165,21 +166,33 @@
 						</div>
 					{/if}
 				</div>
-			</div>
-		</div>
-		<div class="bg-[#1F5082] flex flex-row justify-center">
-			<Button onclick={runMypy} text="Run mypy" />
-			<TextEntry bind:value={flags} placeholder="Mypy command line arguments go here..." />
-			<Modal
-				show={$modal}
-				classBg=""
-				styleWindow={{ backgroundColor: '#1F5082', boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
-				styleCloseButton={{ backgroundColor: 'rgb(203 213 225)', 'border-color': '#2D323B' }}
-			>
-				<Button onclick={getShortUrl} text="Share" />
-			</Modal>
+			{:catch error}
+				<p>Uh-oh, an error occured! :( {error.toString()}</p>
+			{/await}
 		</div>
 	</div>
-{:catch error}
-	<p>Uh-oh, an error occured! :( {error.toString()}</p>
-{/await}
+	<div id="footer" class="bg-[#1F5082] flex flex-row justify-center">
+		{#await loadPyodide}
+			<div class="h-full" />
+		{:then}
+			<Button onclick={runMypy} text="Run mypy" />
+		{:catch error}
+			<p>Hmm something is horribly wrong.</p>
+		{/await}
+		<TextEntry bind:value={flags} placeholder="Mypy command line arguments go here..." />
+		<Modal
+			show={$modal}
+			classBg=""
+			styleWindow={{ backgroundColor: '#1F5082', boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
+			styleCloseButton={{ backgroundColor: 'rgb(203 213 225)', 'border-color': '#2D323B' }}
+		>
+			{#await loadPyodide}
+				<div class="h-full flex" />
+			{:then}
+				<Button onclick={getShortUrl} text="Share" />
+			{:catch error}
+				<p>Hmm something is horribly wrong.</p>
+			{/await}
+		</Modal>
+	</div>
+</div>
