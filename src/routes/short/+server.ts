@@ -16,5 +16,8 @@ export async function GET(event: RequestEvent) {
 
 export async function POST(event: RequestEvent) {
     let value = await event.request.text();
+    if (value.length > 5*10**6) {
+        throw error(413, "Input Python code too long, sorry!");
+    }
     return new Response(await shortener.shorten(value));
 }
