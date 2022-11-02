@@ -39,6 +39,8 @@
 		"@codemirror/lint": "^6.0.0",
 		"@codemirror/state": "^6.1.1",
 		"@codemirror/theme-one-dark": "^6.0.0",
+		"@sentry/svelte": "^7.17.3",
+		"@sentry/tracing": "^7.17.3",
 		"@sveltejs/adapter-vercel": "^1.0.0-next.74",
 		"ansi-to-html": "^0.7.2",
 		"codemirror": "^6.0.1",

@@ -1,5 +1,10 @@
 import { loadPyodide } from "pyodide";
 import * as Comlink from "comlink";
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+    dsn: "https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792",
+});
 
 async function loadPyodideAndPackages(version = "0.21.2") {
     const pyodide = await loadPyodide({indexURL: `https://cdn.jsdelivr.net/pyodide/v${version}/full/`});
@@ -60,9 +65,7 @@ class MypyWebworkerInterface {
         }
         console.log(`Successfully installed ${package_name}.`)
         return null;
-        
     }
-    
 }
 
 Comlink.expose(MypyWebworkerInterface);

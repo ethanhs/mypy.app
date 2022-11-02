@@ -17,6 +17,16 @@
 	import Loader from '$lib/components/Loader.svelte';
 	import TextEntry from '$lib/components/TextEntry.svelte';
 
+	import * as Sentry from "@sentry/svelte";
+	import { BrowserTracing } from "@sentry/tracing";
+
+	Sentry.init({
+		dsn: "https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792",
+		// @ts-ignore
+		integrations: [new BrowserTracing()],
+		tracesSampleRate: 1.0,
+	});
+
 	const modal: Writable<string | null> = writable(null);
 	const extensions = [
 		history(),
