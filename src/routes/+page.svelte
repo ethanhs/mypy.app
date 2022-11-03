@@ -21,8 +21,8 @@
 	import { BrowserTracing } from '@sentry/tracing';
 
 	import { logBreadcrumb } from '$lib/error';
-
 	Sentry.init({
+		environment: `${import.meta.env.MODE}`,
 		dsn: 'https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792',
 		// @ts-ignore
 		integrations: [new BrowserTracing()],
