@@ -17,16 +17,16 @@
 	import Loader from '$lib/components/Loader.svelte';
 	import TextEntry from '$lib/components/TextEntry.svelte';
 
-	import * as Sentry from "@sentry/svelte";
-	import { BrowserTracing } from "@sentry/tracing";
+	import * as Sentry from '@sentry/svelte';
+	import { BrowserTracing } from '@sentry/tracing';
 
-	import { logBreadcrumb } from "$lib/error";
+	import { logBreadcrumb } from '$lib/error';
 
 	Sentry.init({
-		dsn: "https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792",
+		dsn: 'https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792',
 		// @ts-ignore
 		integrations: [new BrowserTracing()],
-		tracesSampleRate: 1.0,
+		tracesSampleRate: 1.0
 	});
 
 	const modal: Writable<string | null> = writable(null);
@@ -65,12 +65,12 @@
 			[flags, packages, src] = await res.json();
 			installed_packages = new Set(packages);
 		}
-		
+
 		if (installed_packages.size != 0) {
 			await Promise.all(
 				Array.from(installed_packages).map(async (installed_package) => {
 					await mypy_instance.installPackage(installed_package);
-					logBreadcrumb({category: "packages", message: `${installed_packages}`, level: "info"});
+					logBreadcrumb({ category: 'packages', message: `${installed_packages}`, level: 'info' });
 				})
 			);
 		}
@@ -95,11 +95,11 @@
 			'--color-output',
 			...args
 		]);
-		let level = "info";
+		let level = 'info';
 		if (retcode != 0) {
-			level = "error";
+			level = 'error';
 		}
-		logBreadcrumb({category: "mypy", message: `${stdout + stderr}`, level: level});
+		logBreadcrumb({ category: 'mypy', message: `${stdout + stderr}`, level: level });
 		waiting_for_mypy = false;
 		output = convert.toHtml(stdout + stderr);
 	}
@@ -109,7 +109,11 @@
 		const error: string = await mypy_instance.installPackage(package_name);
 		if (error != null) {
 			piperror = error.replace(/(?:\r\n|\r|\n)/g, '<br>');
-			logBreadcrumb({category: "packages", message: `Failed to install package ${package_name}`, level: "error"});			
+			logBreadcrumb({
+				category: 'packages',
+				message: `Failed to install package ${package_name}`,
+				level: 'error'
+			});
 		} else {
 			// Assume if there was an error the package did not get installed correctly
 			installed_packages.add(package_name);

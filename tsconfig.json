@@ -11,7 +11,7 @@
 		"inlineSources": true,
 		"sourceRoot": "/",
 		"strict": true,
-		"isolatedModules": true,
+		"isolatedModules": true
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//
