@@ -2,6 +2,7 @@
 	"name": "mypy.app",
 	"version": "0.0.1",
 	"private": true,
+	"license": "Apache-2.0",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -48,6 +49,7 @@
 		"ioredis": "^5.2.3",
 		"pyodide": "^0.21.2",
 		"svelte-codemirror-editor": "^1.1.0",
-		"svelte-simple-modal": "^1.4.1"
+		"svelte-simple-modal": "^1.4.1",
+		"@lezer/common": "1.0.1"
 	}
 }
