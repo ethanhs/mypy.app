@@ -12,7 +12,12 @@ const config = {
 		enableSourcemap: true
 	},
 	kit: {
-		adapter: vercel()
+		adapter: vercel(),
+		vite: {
+            define: {
+                global: {}
+            }
+        }
 	}
 };
 
