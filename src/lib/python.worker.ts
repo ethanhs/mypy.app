@@ -18,7 +18,7 @@ async function loadPyodideAndPackages(version = '0.21.2') {
 	logBreadcrumb({ category: 'packages', message: 'Loaded micropip', level: 'info' });
 	await micropip.install(['typing_extensions>=3.10', 'mypy_extensions>=0.4.3', 'tomli>=1.1.0']);
 	await pyodide.loadPackage(
-		'/mypy-0.980+dev.36709e317890623feb0b2d81b02fff8ae4346b2d.dirty-cp310-cp310-emscripten_3_1_14_wasm32.whl'
+		'/mypy-1.0.0-cp310-cp310-emscripten_3_1_14_wasm32.whl'
 	);
 	logBreadcrumb({ category: 'packages', message: 'Loaded mypy', level: 'info' });
 	return pyodide;
