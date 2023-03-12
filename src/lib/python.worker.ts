@@ -8,7 +8,7 @@ Sentry.init({
 	dsn: 'https://0439a0c382654a0782f092e6e8ab8e86@o4504090754351104.ingest.sentry.io/4504090756513792'
 });
 
-async function loadPyodideAndPackages(version = '0.21.2') {
+async function loadPyodideAndPackages(version = '0.22.1') {
 	const pyodide = await loadPyodide({
 		indexURL: `https://cdn.jsdelivr.net/pyodide/v${version}/full/`
 	});
@@ -17,9 +17,7 @@ async function loadPyodideAndPackages(version = '0.21.2') {
 	let micropip = pyodide.pyimport('micropip');
 	logBreadcrumb({ category: 'packages', message: 'Loaded micropip', level: 'info' });
 	await micropip.install(['typing_extensions>=3.10', 'mypy_extensions>=0.4.3', 'tomli>=1.1.0']);
-	await pyodide.loadPackage(
-		'/mypy-1.0.0-cp310-cp310-emscripten_3_1_14_wasm32.whl'
-	);
+	await pyodide.loadPackage('/mypy-1.0.0-cp310-cp310-emscripten_3_1_14_wasm32.whl');
 	logBreadcrumb({ category: 'packages', message: 'Loaded mypy', level: 'info' });
 	return pyodide;
 }

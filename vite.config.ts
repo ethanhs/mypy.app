@@ -6,7 +6,7 @@ const config: UserConfig = {
 	optimizeDeps: {
 		exclude: [
 			'codemirror',
-			'@codemirror/language-python',
+			'@codemirror/lang-python',
 			'@codemirror/commands',
 			'@codemirror/lint',
 			'@codemirror/state',

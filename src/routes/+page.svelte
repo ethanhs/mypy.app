@@ -33,7 +33,7 @@
 		});
 	});
 
-	const modal: Writable<string | null> = writable(null);
+	const modal: Writable<any | null> = writable(null);
 	const extensions = [
 		history(),
 		drawSelection(),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Pulse from 'svelte-loading-spinners/dist/Pulse.svelte';
+	import { Pulse } from 'svelte-loading-spinners';
 	export let message = 'Loading...';
 	let cls = 'items-center justify-center h-full flex flex-col';
 	export { cls as class };
