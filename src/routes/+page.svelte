@@ -105,7 +105,7 @@
 		}
 		logBreadcrumb({ category: 'mypy', message: `${stdout + stderr}`, level: level });
 		waiting_for_mypy = false;
-		output = convert.toHtml(stdout + stderr);
+		output = convert.toHtml(stdout + '\n' + stderr);
 	}
 	async function installPackage() {
 		piperror = '';
@@ -154,14 +154,14 @@ h-[calc(100%-5rem)]
 					<Loader message="Loading mypy and Python..." />
 				</div>
 			{:then _}
-				<div id="output_area" class="flex-auto h-[50%]">
+				<div id="output_area" class="flex-auto flex-nowrap overflow-y-scroll h-[50%]">
 					{#if waiting_for_mypy}
 						<Loader message="Running mypy..." />
 					{:else}
 						{@html output}
 					{/if}
 				</div>
-				<div id="pip_area" class="flex-auto h-[50%] border-t-2 border-t-slate-300">
+				<div id="pip_area" class="flex-auto h-[50%] border-t-2 border-t-slate-300 flex-nowrap overflow-y-scroll">
 					{#if waiting_for_pip}
 						<Loader message="Running pip..." />
 					{:else}
@@ -172,7 +172,7 @@ h-[calc(100%-5rem)]
 								</div>
 								<TextEntry bind:value={package_name} placeholder="types-aiofiles" />
 							</div>
-							<div class="flex-auto">
+							<div class="flex-auto flex-nowrap">
 								{@html piperror}
 							</div>
 							<div class="flex-auto">
